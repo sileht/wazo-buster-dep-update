@@ -1,4 +1,4 @@
-#!venv/bin/python
+#!/home/sileht/workspace/wazo/buster-pkgs/jenkins/venv/bin/python
 
 import argparse
 import os
@@ -39,7 +39,9 @@ for builder in builders:
     for sub_builder in sub_builders:
         project = sub_builder.find("projects").text
         props = sub_builder.xpath('configs/*/properties')
+        print("* %s:" % project)
         if not props:
+            print("Nothing to do")
             continue
         prop = props[0]
         prop.text = prop.text.replace("${JOB_NAME}", args.project)
@@ -49,7 +51,9 @@ for builder in builders:
             prop.text += "\nBRANCH=buster"
         elif project == "build-docker":
             prop.text = str(re.sub(r"(IMAGE=.*)", r"\1:buster", prop.text))
-        print("* %s:" % project)
+        else:
+            print("Nothing to do")
+            continue
         print(prop.text)
         print("")
 
